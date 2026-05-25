@@ -2,8 +2,11 @@ package com.lorenz.student_management.controller;
 
 import java.util.List;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -40,8 +43,28 @@ public class StudentController {
     }
 
     // method to retrieve all students information
-    @GetMapping // handle HTTP GET request(retrieve data from the database)
+    @GetMapping // handle HTTP GET request(retrieve data in the database)
     public List<Student> getAll() {
         return studentService.getAllStudents();
+    }
+
+    // method to update student information
+    @PutMapping("/{id}") // handle HTTP PUT request (update existing record in the database)
+    public Student update(@PathVariable(name = "id") Long id, @RequestBody Student updated) {
+        // @PathVariable - used to extract/get values from the URL
+        return studentService.updateStudent(id, updated);
+    }
+
+    // method to delete student information
+    @DeleteMapping("/{id}") // handle HTTP DELETE request(deleting record in the database)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable(name = "id") Long id) {
+        studentService.deleteStudent(id);
+    }
+
+    // method to search student
+    @GetMapping("/{id}")
+    public Student search(@PathVariable(name = "id") Long id) {
+        return studentService.getStudentById(id);
     }
 }
