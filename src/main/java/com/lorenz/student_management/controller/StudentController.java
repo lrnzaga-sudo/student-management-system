@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import com.lorenz.student_management.dto.request_dto.StudentRequestDto;
+import com.lorenz.student_management.dto.response_dto.StudentResponseDto;
 import com.lorenz.student_management.model.Student;
 import com.lorenz.student_management.service.StudentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 
@@ -20,12 +23,8 @@ import lombok.RequiredArgsConstructor;
 
 
 
-@RestController 
-// use to create REST APIs
-// a class that handles HTTP request and returns data (JSON)
+@RestController
 @RequestMapping("/api/students")
-// use at the class level to define a base URL for a controller / methods
-// all methods inside will start with /api/students
 @RequiredArgsConstructor
 public class StudentController {
     
@@ -33,27 +32,23 @@ public class StudentController {
 
     // method to add or create student record
     @PostMapping
-    // handle HTTP POST request (create / add data)
     @ResponseStatus(HttpStatus.CREATED)
-    // tells the server what HTTP status to return
-    // returns 201 CREATED status
-    public Student create(@RequestBody Student student) {
-        // @RequestBody - get the data sent by the client
+    public StudentResponseDto create(@Valid @RequestBody StudentRequestDto student) {
         return studentService.createStudent(student);
     }
 
     // method to retrieve all students information
-    @GetMapping // handle HTTP GET request(retrieve data in the database)
+    @GetMapping
     public List<Student> getAll() {
         return studentService.getAllStudents();
     }
 
     // method to update student information
-    @PutMapping("/{id}") // handle HTTP PUT request (update existing record in the database)
-    public Student update(@PathVariable(name = "id") Long id, @RequestBody Student updated) {
-        // @PathVariable - used to extract/get values from the URL
-        return studentService.updateStudent(id, updated);
-    }
+    // @PutMapping("/{id}") // handle HTTP PUT request (update existing record in the database)
+    // public Student update(@PathVariable(name = "id") Long id, @RequestBody Student updated) {
+    //     // @PathVariable - used to extract/get values from the URL
+    //     return studentService.updateStudent(id, updated);
+    // }
 
     // method to delete student information
     @DeleteMapping("/{id}") // handle HTTP DELETE request(deleting record in the database)
@@ -64,7 +59,8 @@ public class StudentController {
 
     // method to search student
     @GetMapping("/{id}")
-    public Student search(@PathVariable(name = "id") Long id) {
+    @ResponseStatus(HttpStatus.OK)
+    public StudentResponseDto search(@PathVariable(name = "id") Long id) {
         return studentService.getStudentById(id);
     }
 }

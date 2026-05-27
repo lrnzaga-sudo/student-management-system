@@ -3,6 +3,12 @@ package com.lorenz.student_management.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+
+import com.lorenz.student_management.dto.request_dto.StudentRequestDto;
+import com.lorenz.student_management.dto.response_dto.StudentResponseDto;
+import com.lorenz.student_management.exception.DuplicateEmailException;
+import com.lorenz.student_management.exception.StudentNotFoundException;
+import com.lorenz.student_management.mapper.StudentMapper;
 import com.lorenz.student_management.model.Student;
 import com.lorenz.student_management.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,18 +20,22 @@ import lombok.RequiredArgsConstructor;
 
 
 
-@Service // it is where you put rules/validation, processing of data
-@RequiredArgsConstructor 
-// automatically generate a constructor for the fields that are required
-// required fields: final, fields with @NonNull
-// it helps to inject dependencies automatically
+@Service 
+@RequiredArgsConstructor
 public class StudentService {
     
     private final StudentRepository studentRepository;
+    private final StudentMapper studentMapper;
 
     // method to create student record
-    public Student createStudent(Student student) {
-        return studentRepository.save(student);
+    public StudentResponseDto createStudent(StudentRequestDto dto) {
+        if (studentRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new DuplicateEmailException(dto.getEmail());
+        }
+
+        var student = studentMapper.toEntity(dto);
+        var saved = studentRepository.save(student);
+        return studentMapper.toResponseDto(saved);
     }
 
     // method to retrieve all students information from the database
@@ -34,23 +44,22 @@ public class StudentService {
     }
 
     // method to verify if a record exist in the database
-    public Student getStudentById(Long id) {
-        return studentRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Student not found " + id));
-            // orElseThrow() - throw exception 
-            // Runtime Exeption - errors that happens while system is running
+    public StudentResponseDto getStudentById(Long id) {
+        var student = studentRepository.findById(id)
+            .orElseThrow(() -> new StudentNotFoundException(id));
+        return studentMapper.toResponseDto(student);
     }
 
     // method to update exisisting student record
-    public Student updateStudent(Long id, Student updated) {
-        var student = getStudentById(id);
-        student.setFirstName(updated.getFirstName());
-        student.setLastName(updated.getLastName());
-        student.setEmail(updated.getEmail());
-        student.setCourse(updated.getCourse());
-        student.setYearLevel(updated.getYearLevel());
-        return studentRepository.save(student);
-    }
+    // public Student updateStudent(Long id, Student updated) {
+    //     var student = getStudentById(id);
+    //     student.setFirstName(updated.getFirstName());
+    //     student.setLastName(updated.getLastName());
+    //     student.setEmail(updated.getEmail());
+    //     student.setCourse(updated.getCourse());
+    //     student.setYearLevel(updated.getYearLevel());
+    //     return studentRepository.save(student);
+    // }
 
     // method to delete student record
     public void deleteStudent(Long id) {
