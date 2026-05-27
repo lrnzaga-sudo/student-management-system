@@ -18,7 +18,7 @@ import com.lorenz.student_management.dto.response_dto.ErrorResponseDto;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Duplicate email → 409 Conflict
+    // Duplicate email
     @ExceptionHandler(DuplicateEmailException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponseDto handleDuplicateEmail(DuplicateEmailException ex) {
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
             .build();
     }
 
-    // Student not found → 404 Not Found
+    // Student not found
     @ExceptionHandler(StudentNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponseDto handleNotFound(StudentNotFoundException ex) {
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
             .build();
     }
 
-    // Validation errors (@Valid) → 400 Bad Request
+    // Validation errors
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, Object> handleValidationErrors(MethodArgumentNotValidException ex) {
@@ -57,4 +57,5 @@ public class GlobalExceptionHandler {
             "timestamp", LocalDateTime.now()
         );
     }
+
 }

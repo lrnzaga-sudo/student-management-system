@@ -1,5 +1,6 @@
 package com.lorenz.student_management.model;
 
+import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,15 +16,13 @@ import lombok.Data;
 
 
 // represents students table in database
-@Entity // indicate that this class represents a table in the database
-@Table(name = "students") // to specify the exact table in the database
-@Data // shortcut to generate getters, setters, and other common methods automatically
+@Entity 
+@Table(name = "students") 
+@Data 
 public class Student {
-    @Id // refers to students table primary key
+    @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
-    // @GeneratedValue - generate value automatically
-    // strategy = GenerationType.IDENTITY - database ang mag ge generate ng ID gamit ang AUTO-INCREMENT
-    @Column(name = "student_id") // control the column name and rules (nullable, unique, etc.)
+    @Column(name = "student_id") 
     private Long id;
 
     @Column(nullable = false)
@@ -38,4 +37,6 @@ public class Student {
     private String course;
 
     private int yearLevel;
+
+    private LocalDateTime deletedAt;
 }
