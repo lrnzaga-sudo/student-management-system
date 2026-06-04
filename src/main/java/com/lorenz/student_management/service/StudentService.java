@@ -62,6 +62,23 @@ public class StudentService {
         return studentMapper.toResponseDto(student);
     }
 
+    // method for searching student informaton
+    public List<StudentResponseDto> searchStudent(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getAllStudents();
+        }
+
+        var students = studentRepository.searchStudent(keyword.trim());
+
+        if (students.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return students.stream()
+            .map(studentMapper::toResponseDto)
+            .toList();
+    }
+
 
     // method to update exisisting student record
     public StudentResponseDto updateStudent(Long id, StudentRequestDto dto) {
